@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter Sentiment Analysis</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <svg class="twitter-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                </svg>
+                <h1>Sentiment Analysis</h1>
+            </div>
+            <p class="subtitle">Analyze the sentiment of tweets using NLP</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Input Section -->
+            <section class="input-section">
+                <div class="input-card">
+                    <label for="tweet-input" class="input-label">Enter your tweet:</label>
+                    <textarea 
+                        id="tweet-input" 
+                        class="tweet-input" 
+                        placeholder="Type or paste a tweet here to analyze its sentiment..."
+                        maxlength="500"
+                        rows="4"
+                    ></textarea>
+                    <div class="input-footer">
+                        <span class="char-count"><span id="char-count">0</span>/500</span>
+                        <button id="predict-btn" class="predict-btn">
+                            <span class="btn-text">Predict Sentiment</span>
+                            <span class="btn-loader hidden"></span>
+                        </button>
+                    </div>
+                    <div id="error-message" class="error-message hidden"></div>
+                </div>
+            </section>
+
+            <!-- Result Section -->
+            <section id="result-section" class="result-section hidden">
+                <div class="result-card">
+                    <h2 class="result-title">Analysis Result</h2>
+                    <div class="sentiment-display">
+                        <div id="sentiment-icon" class="sentiment-icon"></div>
+                        <div class="sentiment-info">
+                            <div id="sentiment-label" class="sentiment-label"></div>
+                            <div class="confidence-bar-container">
+                                <div id="confidence-bar" class="confidence-bar"></div>
+                            </div>
+                            <div id="confidence-text" class="confidence-text"></div>
+                        </div>
+                    </div>
+                    <div class="probabilities">
+                        <div class="prob-item">
+                            <span class="prob-label">Negative</span>
+                            <div class="prob-bar-container">
+                                <div id="neg-prob-bar" class="prob-bar negative"></div>
+                            </div>
+                            <span id="neg-prob-value" class="prob-value"></span>
+                        </div>
+                        <div class="prob-item">
+                            <span class="prob-label">Positive</span>
+                            <div class="prob-bar-container">
+                                <div id="pos-prob-bar" class="prob-bar positive"></div>
+                            </div>
+                            <span id="pos-prob-value" class="prob-value"></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Examples Section -->
+            <section class="examples-section">
+                <h2 class="section-title">Example Tweets</h2>
+                <p class="section-subtitle">Click on any example to try it out</p>
+                <div id="examples-container" class="examples-container">
+                    <div class="example-loading">Loading examples...</div>
+                </div>
+            </section>
+
+            <!-- History Section -->
+            <section class="history-section">
+                <div class="history-header">
+                    <h2 class="section-title">Recent Predictions</h2>
+                    <button id="clear-history-btn" class="clear-history-btn hidden">Clear History</button>
+                </div>
+                <div id="history-container" class="history-container">
+                    <div class="empty-history">No predictions yet. Try analyzing a tweet!</div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Powered by Machine Learning | Naive Bayes + TF-IDF</p>
+        </footer>
+    </div>
+
+    <script src="../static/js/app.js"></script>
+</body>
+</html>
