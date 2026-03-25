@@ -137,8 +137,7 @@ def get_history():
 # API Routes
 @app.route('/')
 def index():
-    """Serve the main HTML page."""
-    return send_from_directory('../frontend/templates', 'index.html')
+    return render_template('index.html')
 
 
 @app.route('/api/predict', methods=['POST'])
@@ -267,16 +266,13 @@ def internal_error(error):
 
 
 if __name__ == '__main__':
-    # Ensure model exists
     if not os.path.exists(MODEL_PATH):
         print("Model not found. Please run train_model.py first.")
-        print(f"Expected model at: {MODEL_PATH}")
         sys.exit(1)
-    
-    # Load model
+
     load_model()
-    
-    # Run the Flask app
+
     print("Starting Sentiment Analysis API...")
-    print("API will be available at http://localhost:5000")
-    app.run(host='0.0.0.0', port=5000, debug=True)
+
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)

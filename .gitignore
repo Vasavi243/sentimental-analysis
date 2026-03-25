@@ -1,0 +1,4 @@
+backend/prediction_history.txt
+__pycache__/
+*.pyc
+venv/
