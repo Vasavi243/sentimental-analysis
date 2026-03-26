@@ -1,10 +1,9 @@
 /**
  * Sentiment Analysis App - Frontend JavaScript
- * Handles UI interactions and API communication
  */
 
-// API Configuration
-const API_BASE_URL = 'https://sentimental-analysis-cggd.onrender.com';
+// ✅ SAME ORIGIN (NO CORS ISSUE)
+const API_BASE_URL = '';
 
 // DOM Elements
 const tweetInput = document.getElementById('tweet-input');
@@ -27,10 +26,9 @@ const historyContainer = document.getElementById('history-container');
 const clearHistoryBtn = document.getElementById('clear-history-btn');
 
 // State
-let isLoading = false;
 let predictionHistory = JSON.parse(localStorage.getItem('sentimentHistory')) || [];
 
-// Initialize the app
+// Init
 document.addEventListener('DOMContentLoaded', () => {
     initEventListeners();
     loadExamples();
@@ -51,31 +49,27 @@ function initEventListeners() {
     clearHistoryBtn.addEventListener('click', clearHistory);
 }
 
-// Character count
+// Character counter
 function updateCharCount() {
     const count = tweetInput.value.length;
     charCount.textContent = count;
 
-    if (count > 450) {
-        charCount.style.color = '#dc3545';
-    } else if (count > 400) {
-        charCount.style.color = '#ffc107';
-    } else {
-        charCount.style.color = '#657786';
-    }
+    if (count > 450) charCount.style.color = '#dc3545';
+    else if (count > 400) charCount.style.color = '#ffc107';
+    else charCount.style.color = '#657786';
 }
 
-// Predict
+// Predict handler
 async function handlePredict() {
     const text = tweetInput.value.trim();
 
     if (!text) {
-        showError('Please enter some text to analyze');
+        showError('Please enter some text');
         return;
     }
 
     if (text.length > 500) {
-        showError('Text too long (max 500 chars)');
+        showError('Max 500 characters allowed');
         return;
     }
 
@@ -89,69 +83,53 @@ async function handlePredict() {
             displayResult(result);
             addToHistory(text, result);
         } else {
-            showError(result.error);
+            showError(result.error || 'Prediction failed');
         }
+
     } catch (error) {
-        showError('Failed to connect to server (check Render backend)');
+        console.error(error);
+        showError('Server error. Please try again.');
     } finally {
         setLoading(false);
     }
 }
 
-// 🔥 FIXED API CALL
+// ✅ API CALL
 async function predictSentiment(text) {
-    const response = await fetch(`${API_BASE_URL}/api/predict`, {
+    const response = await fetch('/api/predict', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text }),
     });
 
-    if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Prediction request failed');
-    }
+    if (!response.ok) throw new Error('API failed');
 
     return await response.json();
 }
 
+// Show result
 function displayResult(result) {
-    console.log("API RESULT:", result); // DEBUG
-
     const isPositive = result.sentiment === 'Positive';
-    const confidence = result.confidence;
 
-    // Update sentiment text
     sentimentLabel.textContent = result.sentiment;
-
-    // Update emoji
     sentimentIcon.textContent = isPositive ? '😊' : '😠';
 
-    // Update confidence
-    confidenceText.textContent = `${confidence}% confidence`;
+    confidenceBar.style.width = result.confidence + '%';
+    confidenceText.textContent = result.confidence + '% confidence';
 
-    // Update bars
-    confidenceBar.style.width = `${confidence}%`;
+    negProbBar.style.width = result.probabilities.negative + '%';
+    posProbBar.style.width = result.probabilities.positive + '%';
 
-    const negProb = result.probabilities.negative;
-    const posProb = result.probabilities.positive;
+    negProbValue.textContent = result.probabilities.negative + '%';
+    posProbValue.textContent = result.probabilities.positive + '%';
 
-    negProbBar.style.width = `${negProb}%`;
-    posProbBar.style.width = `${posProb}%`;
+    resultSection.classList.remove('hidden');
+    resultSection.style.display = 'block';
 
-    negProbValue.textContent = `${negProb}%`;
-    posProbValue.textContent = `${posProb}%`;
-
-    // 🔥 FORCE SHOW RESULT SECTION
-    resultSection.style.display = "block";
-    resultSection.classList.remove("hidden");
-
-    // Scroll to result
     resultSection.scrollIntoView({ behavior: 'smooth' });
 }
 
-// Loading state
+// Loading
 function setLoading(loading) {
     predictBtn.disabled = loading;
 
@@ -164,7 +142,7 @@ function setLoading(loading) {
     }
 }
 
-// Error handling
+// Errors
 function showError(msg) {
     errorMessage.textContent = msg;
     errorMessage.classList.remove('hidden');
@@ -174,15 +152,13 @@ function hideError() {
     errorMessage.classList.add('hidden');
 }
 
-// 🔥 FIXED examples API
+// Load examples
 async function loadExamples() {
     try {
-        const res = await fetch(`${API_BASE_URL}/api/examples`);
+        const res = await fetch('/api/examples');
         const data = await res.json();
 
-        if (data.success) {
-            renderExamples(data.examples);
-        }
+        if (data.success) renderExamples(data.examples);
     } catch {
         examplesContainer.innerHTML = 'Failed to load examples';
     }
@@ -214,6 +190,8 @@ function addToHistory(text, result) {
         confidence: result.confidence,
     });
 
+    predictionHistory = predictionHistory.slice(0, 20);
+
     localStorage.setItem('sentimentHistory', JSON.stringify(predictionHistory));
     renderHistory();
 }
@@ -239,10 +217,10 @@ function clearHistory() {
     renderHistory();
 }
 
-// 🔥 FIXED health API
+// Health check
 async function checkHealth() {
     try {
-        const res = await fetch(`${API_BASE_URL}/api/health`);
+        const res = await fetch('/api/health');
         const data = await res.json();
         return data.status === 'healthy';
     } catch {
@@ -251,7 +229,5 @@ async function checkHealth() {
 }
 
 checkHealth().then(ok => {
-    if (!ok) {
-        console.warn('Backend not reachable');
-    }
+    if (!ok) console.warn('Backend not reachable');
 });
