@@ -76,13 +76,6 @@ pip install -r backend/requirements.txt
 ```bash
 python backend/app.py
 ```
-
-### 4️⃣ Open in browser
-
-```
-http://localhost:5000
-```
-
 ---
 
 ## 🧪 Example
