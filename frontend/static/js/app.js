@@ -4,7 +4,7 @@
  */
 
 // API Configuration
-const API_BASE_URL = 'https://sentimental-analysis-1.onrender.com';
+const API_BASE_URL = 'https://sentimental-analysis-cggd.onrender.com';
 
 // DOM Elements
 const tweetInput = document.getElementById('tweet-input');
@@ -102,16 +102,20 @@ async function handlePredict() {
 async function predictSentiment(text) {
     const response = await fetch(`${API_BASE_URL}/api/predict`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ text }),
     });
 
     if (!response.ok) {
-        throw new Error('API error');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Prediction request failed');
     }
 
     return await response.json();
 }
+
 function displayResult(result) {
     console.log("API RESULT:", result); // DEBUG
 
