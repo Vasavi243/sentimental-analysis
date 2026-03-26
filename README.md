@@ -98,18 +98,6 @@ I absolutely love this product!
 ```
 Positive (95% confidence)
 ```
-
----
-
-## 📸 Screenshots
-
-> Add screenshots here (recommended)
-
-```
-/frontend/static/screenshots/home.png
-/frontend/static/screenshots/result.png
-```
-
 ---
 
 ## 🚀 Deployment
