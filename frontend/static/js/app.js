@@ -112,29 +112,39 @@ async function predictSentiment(text) {
 
     return await response.json();
 }
-
-// Display result
 function displayResult(result) {
+    console.log("API RESULT:", result); // DEBUG
+
     const isPositive = result.sentiment === 'Positive';
     const confidence = result.confidence;
 
-    sentimentIcon.textContent = isPositive ? '😊' : '😠';
+    // Update sentiment text
     sentimentLabel.textContent = result.sentiment;
-    sentimentLabel.className = `sentiment-label ${isPositive ? 'positive' : 'negative'}`;
 
+    // Update emoji
+    sentimentIcon.textContent = isPositive ? '😊' : '😠';
+
+    // Update confidence
+    confidenceText.textContent = `${confidence}% confidence`;
+
+    // Update bars
     confidenceBar.style.width = `${confidence}%`;
-    confidenceText.textContent = `${confidence.toFixed(1)}% confidence`;
 
-    const neg = result.probabilities.negative;
-    const pos = result.probabilities.positive;
+    const negProb = result.probabilities.negative;
+    const posProb = result.probabilities.positive;
 
-    negProbBar.style.width = `${neg}%`;
-    posProbBar.style.width = `${pos}%`;
+    negProbBar.style.width = `${negProb}%`;
+    posProbBar.style.width = `${posProb}%`;
 
-    negProbValue.textContent = `${neg.toFixed(1)}%`;
-    posProbValue.textContent = `${pos.toFixed(1)}%`;
+    negProbValue.textContent = `${negProb}%`;
+    posProbValue.textContent = `${posProb}%`;
 
-    resultSection.classList.remove('hidden');
+    // 🔥 FORCE SHOW RESULT SECTION
+    resultSection.style.display = "block";
+    resultSection.classList.remove("hidden");
+
+    // Scroll to result
+    resultSection.scrollIntoView({ behavior: 'smooth' });
 }
 
 // Loading state
