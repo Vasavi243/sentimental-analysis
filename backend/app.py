@@ -265,13 +265,15 @@ def internal_error(error):
     }), 500
 
 
-if __name__ == '__main__':
-    if not os.path.exists(MODEL_PATH):
-        print("Model not found. Please run train_model.py first.")
-        sys.exit(1)
-
+# Load model at startup (IMPORTANT for Render)
+try:
     load_model()
+    print("Model loaded at startup!")
+except Exception as e:
+    print("Error loading model:", e)
 
+
+if __name__ == '__main__':
     print("Starting Sentiment Analysis API...")
 
     port = int(os.environ.get("PORT", 5000))
